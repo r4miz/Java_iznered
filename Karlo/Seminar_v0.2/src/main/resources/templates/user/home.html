@@ -17,58 +17,35 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01"
-            aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+    <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
+        <div th:replace="fragments/user/navigation_bar :: navBrand"></div>
         <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-            <a class="navbar-brand" th:href="@{/user/home}">
-                <img th:src="@{/images/logo.png}" width="50" height="50">
-            </a>
-            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                <li class="nav-item active">
-                    <form th:action="@{/user/mybills}" method="get" class="form-inline my-2 my-lg-0">
-                        <button class="btn btn-outline-success" type="submit">My bills</button>
-                    </form>
-                </li>
-
-                <li class="nav-item dropdown">
-                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Profile management
-                    </button>
-
-                    <div class="dropdown-menu">
-
-                        <form th:action="@{/user/myprofile}" method="get">
-                            <button class="btn btn-block btn-light" type="submit">My profile</button>
-                        </form>
-                        <form th:action="@{/user/editprofile}" method="get">
-                            <button class="btn btn-block btn-space btn-light" type="submit">Edit profile</button>
-                        </form>
-                        <form th:action="@{/user/delprofile}" method="get">
-                            <button class="btn btn-block btn-space btn-danger" style="opacity: 0.35" type="submit">Delete
-                                profile</button>
-                        </form>
-                    </div>
+            <div th:replace="fragments/user/navigation_bar :: logo"></div>
+            <div th:replace="fragments/user/navigation_bar :: navList"></div>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <div th:replace="fragments/any/navigation :: logout"></div>
                 </li>
             </ul>
         </div>
-
-        <form th:action="@{/logout}" method="get" class="form-inline my-2 my-lg-0">
-            <button class="btn btn-outline-danger btn-sm" type="submit">Sign out</button>
-        </form>
     </nav>
+    <!--                End nav bar             -->
 
-        <!--                End nav bar             -->
-        
     <div class="container">
 
         <div class="panel-group" style="margin-top:40px">
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    <span th:utext="${userName}"></span>
+                    <table>
+                        <tbody>
+                            <tr th:each="role: ${roles}">
+                                <td><span th:text="${role.id}">as</span></td>
+                                <td><span th:text="${role.role}">asdf</span></td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+
                 </div>
                 <div class="panel-body">
                     <img th:src="@{/images/bozic.jpg}" class="img-responsive center-block" width="400" height="400" alt="Beer" />

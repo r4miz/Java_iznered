@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <title>Admin home</title>
+    <title>All users</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/home.css}" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
@@ -24,27 +24,43 @@
             <div th:replace="fragments/admin/navigation_bar :: navList"></div>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <div th:replace="fragments/any/navigation :: logout"></div>
+                    <div th:replace="fragments/any/navigation :: back"></div>
                 </li>
             </ul>
         </div>
     </nav>
-
     <!--                End nav bar             -->
-    <div class="container">
 
-        <div class="panel-group" style="margin-top:40px">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <span th:utext="${userName}"></span>
-                </div>
-                <div class="panel-body">
-                    <img th:src="@{/images/bozic.jpg}" class="img-responsive center-block" width="400" height="400" alt="Beer" />
-                </div>
-
-            </div>
-        </div>
-
+    <div class="container pt-5">
+        <form th:action="@{/admin/edituser}" method="get">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">id</th>
+                        <th scope="col">Role</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Last name</th>
+                        <th scope="col">email</th>
+                        <th scope="col">Account status</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${listOfUsers.empty}">
+                        <td colspan="6">No users registered</td>
+                    </tr>
+                    <tr th:each="user: ${listOfUsers}">
+                        <th scope="row"><span th:text="${user.id}"> id </span></th>
+                        <td th:each="role: ${user.getRoles().toArray()}"><span th:text="${role.role}"> Role </span></td>
+                        <td><span th:text="${user.name}"> Name </span></td>
+                        <td><span th:text="${user.lastName}"> Last name </span></td>
+                        <td><span th:text="${user.email}"> email </span></td>
+                        <td><span th:text="${user.active} ? 'Active' : 'Disabled'"> Account status </span></td>
+                        <td><button class="btn btn-warning btn-sm" type="submit" th:id="email" th:name="email" th:value="${user.email}">Edit</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
     </div>
 </body>
 

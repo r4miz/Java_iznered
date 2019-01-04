@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <title>User Page</title>
+    <title>admin Page</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/home.css}" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
@@ -18,10 +18,10 @@
 
 <body>
     <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
-        <div th:replace="fragments/user/navigation_bar :: navBrand"></div>
+        <div th:replace="fragments/admin/navigation_bar :: navBrand"></div>
         <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-            <div th:replace="fragments/user/navigation_bar :: logo"></div>
-            <div th:replace="fragments/user/navigation_bar :: navList"></div>
+            <div th:replace="fragments/admin/navigation_bar :: logo"></div>
+            <div th:replace="fragments/admin/navigation_bar :: navList"></div>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
                     <div th:replace="fragments/any/navigation :: back"></div>
@@ -30,14 +30,14 @@
         </div>
     </nav>
     <!--                End nav bar             -->
-    
+
     <div class="container pt-5 pb-5">
         <div class="row">
             <div class="col-sm-6">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Name</h5>
-                        <form th:action="@{/user/editprofile/edit_name}" method="post" class="form-inline my-2 my-lg-0">
+                        <form th:action="@{/admin/editprofile/edit_name}" method="post" class="form-inline my-2 my-lg-0">
                             <input type="text" min="3" id="name" name="name" class="form-control" aria-describedby=""
                                 th:placeholder="${userName}">
                             <button class="btn btn-outline-success" type="submit">Submit</button>
@@ -51,7 +51,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Last name</h5>
-                        <form th:action="@{/user/editprofile/edit_lastName}" method="post" class="form-inline my-2 my-lg-0">
+                        <form th:action="@{/admin/editprofile/edit_lastName}" method="post" class="form-inline my-2 my-lg-0">
                             <input type="text" min="3" id="lastName" name="lastName" class="form-control"
                                 aria-describedby="" th:placeholder="${userLastName}">
                             <button class="btn btn-outline-success" type="submit">Submit</button>
@@ -65,23 +65,23 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Password</h5>
-                        <form th:action="@{/user/editprofile/edit_password}" method="post" class="form-inline my-2 my-lg-0">
-                        <ul class="list-group">
-                            <li class="list-group-item">
-                                <input type="password" min="3" id="passOne" name="passOne" class="form-control"
-                                    aria-describedby="" placeholder="Enter a new password">
-                            </li>
-                            <li class="list-group-item">
-                                <input type="password" min="3" id="passTwo" name="passTwo" class="form-control"
-                                    aria-describedby="" placeholder="Retype your password">
-                            </li>
-                            <li class="list-group-item">
-                                <button class="btn btn-outline-success" type="submit">Submit</button>
-                            </li>
+                        <form th:action="@{/admin/editprofile/edit_password}" method="post" class="form-inline my-2 my-lg-0">
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <input type="password" min="3" id="passOne" name="passOne" class="form-control"
+                                        aria-describedby="" placeholder="Enter a new password">
+                                </li>
+                                <li class="list-group-item">
+                                    <input type="password" min="3" id="passTwo" name="passTwo" class="form-control"
+                                        aria-describedby="" placeholder="Retype your password">
+                                </li>
+                                <li class="list-group-item">
+                                    <button class="btn btn-outline-success" type="submit">Submit</button>
+                                </li>
 
-                            <br><label class="validation-message">
-                                <span th:utext="${errorPassword}"></span></label>
-                        </ul>
+                                <br><label class="validation-message">
+                                    <span th:utext="${errorPassword}"></span></label>
+                            </ul>
                         </form>
                     </div>
                 </div>
@@ -98,7 +98,7 @@
                             <button class="btn btn-outline-danger disabled" type="submit">Submit</button>
                             <small id="emailHelp" class="form-text text-muted">
                                 Your email is your personal identification on this site, it's not wise to
-                                change it for your user experience</small>
+                                change it for your administration purposes</small>
                         </form>
                     </div>
                 </div>

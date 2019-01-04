@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>All users</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/home.css}" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
+        <div th:replace="fragments/admin/navigation_bar :: navBrand"></div>
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+            <div th:replace="fragments/admin/navigation_bar :: logo"></div>
+            <div th:replace="fragments/admin/navigation_bar :: navList"></div>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <div th:replace="fragments/any/navigation :: back"></div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <!--                End nav bar             -->
+
+    <div class="container pt-5 pb-5">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">id</h5>
+                        <form class="form-inline my-2 my-lg-0">
+                            <input type="text" min="3" id="name" name="name" class="form-control" aria-describedby=""
+                                th:placeholder="${user.getId()}" readonly>
+                            <button class="btn btn-outline-danger" type="submit" disabled>Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Role</h5>
+                        <form th:action="@{/admin/editrole}" method="get" class="form-inline my-2 my-lg-0">
+                            <select name="givenRole" class="form-control" aria-describedby="roleHelp">
+                                <option value="giveADMIN" th:if="${role == 'USER'}">Give user Admin privileges</option>
+                                <option value="removeADMIN" th:unless="${role == 'USER'}">Remove Admin privileges</option>
+                            </select>
+                            <button name="email" th:value="${user.getEmail()}" class="btn btn-outline-success" type="submit">Submit</button>
+                            <small id="roleHelp" th:if="${role == 'USER'}" class="form-text text-muted">
+                                If you give this user ADMIN privileges, he/she can access or do whatever you can on
+                                this site, consider this decision wisely!
+                            </small>
+                            <small id="roleHelp" th:unless="${role == 'USER'}" class="form-text text-muted">
+                                Removing his/hers ADMIN privilege, you will degrade their role on this site to USER,
+                                consider this decision wisely!
+                            </small>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Account status</h5>
+                        <form th:action="@{/admin/offonaccount}" method="get" class="form-inline my-2 my-lg-0">
+                            <select name="givenActive" class="form-control" aria-describedby="statusHelp">
+                                <option value="ActiveOff" th:if="${user.getActive() == 1}">Disable this account</option>
+                                <option value="ActiveOn" th:unless="${user.getActive() == 1}">Enable this account</option>
+                            </select>
+                            <button name="email" th:value="${user.getEmail()}" class="btn btn-outline-success" type="submit">Submit</button>
+                            <small id="statusHelp" th:if="${user.getActive() == 1}" class="form-text text-muted">
+                                Disabling this account, the user it's registered to will no longer be able to login,
+                                but all of his/hers data will be saved regardlessly.
+                            </small>
+                            <small id="statusHelp" th:unless="${user.getActive() == 1}" class="form-text text-muted">
+                                Enabling this account, the user it's registered to will be able to login again and
+                                resume using this site with the role he/she was given.
+                            </small>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Name</h5>
+                        <form class="form-inline my-2 my-lg-0">
+                            <input type="text" min="3" id="name" name="name" class="form-control" aria-describedby=""
+                                th:placeholder="${user.getName()}" readonly>
+                            <button class="btn btn-outline-danger" type="submit" disabled>Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Last name</h5>
+                        <form class="form-inline my-2 my-lg-0">
+                            <input type="text" min="3" id="lastName" name="lastName" class="form-control"
+                                aria-describedby="" th:placeholder="${user.getLastName()}" readonly>
+                            <button class="btn btn-outline-danger" type="submit" disabled>Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">E-mail</h5>
+                        <form class="form-inline my-2 my-lg-0">
+                            <input type="email" min="3" id="email" name="email" class="form-control" aria-describedby="emailHelp"
+                                readonly th:placeholder="${user.getEmail()}">
+                            <button class="btn btn-outline-danger disabled" type="submit" disabled>Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

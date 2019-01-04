@@ -1,8 +1,11 @@
 package com.gpch.login.controller;
 
-import javax.security.auth.message.callback.PrivateKeyCallback.Request;
+import java.util.List;
+import java.util.Set;
+
 import javax.validation.Valid;
 
+import com.gpch.login.model.Role;
 import com.gpch.login.model.User;
 import com.gpch.login.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +63,7 @@ public class LoginController implements ErrorController{
         return modelAndView;
     }
     /*=======================================
-          ADMIN profile showcase
+          ADMIN homepage showcase
       =======================================*/
     @RequestMapping(value="/admin/home", method = RequestMethod.GET)
     public ModelAndView home(){
@@ -68,30 +71,94 @@ public class LoginController implements ErrorController{
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByEmail(auth.getName());
         modelAndView.addObject("userName", "Welcome " + user.getName() + " " + user.getLastName() + " (" + user.getEmail() + ")");
-        modelAndView.addObject("adminMessage","Ajde momci ucinite nesto od ovoga");
         modelAndView.setViewName("admin/home");
         return modelAndView;
     }
+    /*=======================================
+       ADMINISTRATION TOOLS
+      =======================================*/
+
+    @RequestMapping(value = "/admin/edituser", method = RequestMethod.GET)
+    public ModelAndView adminToolsEditUser(@RequestParam("email") String email){
+        String userRole = new String();
+        ModelAndView modelAndView = new ModelAndView();
+        User user = userService.findUserByEmail(email);
+        modelAndView.addObject(user);
+        modelAndView.setViewName("/admin/edituser"); // 88 - 92 za uvatit koji mu je role, String
+        Set<Role> roles = user.getRoles();
+        for (Role role : roles) {
+            userRole = role.getRole();           
+        }
+        modelAndView.addObject("role", userRole);
+        return modelAndView;
+    }
+    //administration tools all users
+    @RequestMapping(value = "/admin/listall", method = RequestMethod.GET)
+    public ModelAndView listAllUsers() {
+        ModelAndView modelAndView = new ModelAndView();
+        List<User> users = userService.findAllUsers();
+        modelAndView.addObject("listOfUsers", users);
+        modelAndView.setViewName("/admin/listall");
+        return modelAndView;
+    }
+    //administration tools give/remove admin
+    @RequestMapping(value = "/admin/editrole", method = RequestMethod.GET)
+    public String editUserRole(@RequestParam("givenRole") String givenRole, 
+    @RequestParam("email") String email){
+        if(givenRole.equals("giveADMIN") == true){
+            userService.updateRole(email,"ADMIN");
+        }
+        else if(givenRole.equals("removeADMIN") == true){
+            userService.updateRole(email, "USER");
+        }
+        if (SecurityContextHolder.getContext().getAuthentication().getName().equals(email) == true) {
+            return "redirect:/logout"; // slucaj da sam sebi mices admin role da te redirecta na root
+        } 
+        else {
+            return "redirect:../admin/listall"; // ostalim userima si minja role
+        }
+    }
+    //administration tools enable/disable account
+    @RequestMapping(value = "/admin/offonaccount", method = RequestMethod.GET)
+    public String editAccountOnOff(@RequestParam("givenActive") String givenActive,
+    @RequestParam("email") String email){
+        if (givenActive.equals("ActiveOff") == true){
+            userService.updateActive(email, 0);
+        }
+        else if (givenActive.equals("ActiveOn") == true){
+            userService.updateActive(email, 1);
+        }
+        if (SecurityContextHolder.getContext().getAuthentication().getName().equals(email) == true) {
+            return "redirect:/logout"; // slucaj da sam sebi gasis acc da te redirecta na root
+        }
+        else {
+            return "redirect:../admin/listall"; // ostalim userima si minja active
+        }
+    }
 
     /*=======================================
-          user homepage showcase
+          user homepage showcase, or redirect to ADMIN homepage
       =======================================*/
     @RequestMapping(value = "/user/home", method = RequestMethod.GET)
     public ModelAndView userHome() {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findUserByEmail(auth.getName());
-        //modelAndView.addObject("userName", user.getName() + user.getLastName());
-        modelAndView.addObject("userName",
-                "Sritan božić ekipa <3 <br>navigacijski bar pari jeben <br>nabijen javu na kurac...");
-        modelAndView.setViewName("user/home");
+        if (this.checkIfAdmin(auth)) {
+            modelAndView.setViewName("redirect:/admin/home");
+        }
+        else{
+            User user = userService.findUserByEmail(auth.getName());
+            Set<Role> role = user.getRoles();
+            modelAndView.addObject("roles", role.toArray());
+            modelAndView.setViewName("user/home");
+        }
         return modelAndView;
     }
     
     /*=======================================
           user profile showcase
       =======================================*/
-    @RequestMapping(value = "/user/myprofile", method = RequestMethod.GET)
+    @RequestMapping(value = { "/user/myprofile", "/admin/myprofile"}, method = RequestMethod.GET)
     public ModelAndView userProfileView() {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -99,13 +166,19 @@ public class LoginController implements ErrorController{
         modelAndView.addObject("userName", user.getName());
         modelAndView.addObject("userLastName", user.getLastName());
         modelAndView.addObject("userEmail", user.getEmail());
-        modelAndView.setViewName("user/myprofile");
+        if (this.checkIfAdmin(auth)) {
+            modelAndView.setViewName("admin/myprofile");
+        }
+        else{
+            modelAndView.setViewName("user/myprofile");
+        }
+        
         return modelAndView;
     }
     /*=======================================
           user edit profile showcase
       =======================================*/
-    @RequestMapping(value = "/user/editprofile", method = RequestMethod.GET)
+    @RequestMapping(value = { "/user/editprofile", "/admin/editprofile"}, method = RequestMethod.GET)
     public ModelAndView userEditProfileView() {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -113,11 +186,17 @@ public class LoginController implements ErrorController{
         modelAndView.addObject("userName", user.getName());
         modelAndView.addObject("userLastName", user.getLastName());
         modelAndView.addObject("userEmail", user.getEmail());
-        modelAndView.setViewName("user/editprofile");
+        if (this.checkIfAdmin(auth)) {
+            modelAndView.setViewName("admin/editprofile");
+        } else {
+            modelAndView.setViewName("user/editprofile");
+        }
         return modelAndView;
     }
     //user edit name
-    @RequestMapping(value = "/user/editprofile/edit_name", method = RequestMethod.POST)
+    @RequestMapping(value = {
+        "/user/editprofile/edit_name","/admin/editprofile/edit_name"},
+        method = RequestMethod.POST)
     public String editUserName(@RequestParam("name") String name){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         userService.updateUserName(auth.getName(), name);
@@ -125,7 +204,9 @@ public class LoginController implements ErrorController{
     }
 
     // user edit last name
-    @RequestMapping(value = "/user/editprofile/edit_lastName", method = RequestMethod.POST)
+    @RequestMapping(value = {
+        "/user/editprofile/edit_lastName", "/admin/editprofile/edit_lastName"},
+        method = RequestMethod.POST)
     public String editUserLastName(@RequestParam("lastName") String lastName) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         userService.updateUserLastName(auth.getName(), lastName);
@@ -133,7 +214,9 @@ public class LoginController implements ErrorController{
     }
     
     //user edit password
-    @RequestMapping(value = "/user/editprofile/edit_password", method = RequestMethod.POST)
+    @RequestMapping(value = {
+        "/user/editprofile/edit_password", "/admin/editprofile/edit_password"}, 
+        method = RequestMethod.POST)
     public ModelAndView editUserPassword(
         @RequestParam("passOne") String passOne, @RequestParam("passTwo") String passTwo) {
             ModelAndView modelAndView = new ModelAndView();
@@ -149,23 +232,36 @@ public class LoginController implements ErrorController{
             modelAndView.addObject("userName", user.getName());
             modelAndView.addObject("userLastName", user.getLastName());
             modelAndView.addObject("userEmail", user.getEmail());
-            modelAndView.setViewName("/user/editprofile");
+            if (this.checkIfAdmin(auth)) {
+                modelAndView.setViewName("admin/editprofile");
+            } 
+            else {
+                modelAndView.setViewName("user/editprofile");
+            }
             return modelAndView;
     }
     /*=======================================
           user delete showcase
       =======================================*/
-    @RequestMapping(value = "/user/delprofile", method = RequestMethod.GET)
+    @RequestMapping(value = {
+        "/user/delprofile", "/admin/delprofile"},
+        method = RequestMethod.GET)
     public ModelAndView userDeleteView(){
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByEmail(auth.getName());
         modelAndView.addObject("userName", user.getName());
-        modelAndView.setViewName("user/deleteprofile");
+        if (this.checkIfAdmin(auth)) {
+            modelAndView.setViewName("admin/deleteprofile");
+        } else {
+            modelAndView.setViewName("user/deleteprofile");
+        }
         return modelAndView;
     }
     // delete user (seta se active u 0 i ka da ga nema a svi podaci sacuvani kakogod)
-    @RequestMapping(value = "/user/delprofile/deleteUser", method = RequestMethod.POST)
+    @RequestMapping(value = {
+        "/user/delprofile/deleteUser", "/admin/delprofile/deleteUser"},
+        method = RequestMethod.POST)
     public String deleteUser(@RequestParam("delete") String confirmation){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (confirmation.equals("YES")){
@@ -192,6 +288,13 @@ public class LoginController implements ErrorController{
             return "redirect:../user/home";
         }
     }
-
+    
+// shortcut functions
+    private boolean checkIfAdmin(Authentication auth){
+        return auth.getAuthorities().toString().equals("[ADMIN]");
+    }
 
 }
+
+
+

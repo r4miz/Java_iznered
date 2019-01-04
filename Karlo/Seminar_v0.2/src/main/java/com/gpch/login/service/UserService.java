@@ -4,12 +4,14 @@ import com.gpch.login.model.Role;
 import com.gpch.login.model.User;
 import com.gpch.login.repository.RoleRepository;
 import com.gpch.login.repository.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 @Service("userService")
 public class UserService {
@@ -25,11 +27,14 @@ public class UserService {
         this.roleRepository = roleRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
+    public List<User> findAllUsers(){
+        return userRepository.findAll();
+    }
 
     public User findUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
-
+    
     public User saveUser(User user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         user.setActive(1);
@@ -62,4 +67,17 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    //ADMIN tools  -  role editanje nad userima
+    public User updateRole(String email, String role){
+        User user = this.findUserByEmail(email);
+        Role userRole = roleRepository.findByRole(role);
+        user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
+        return userRepository.save(user);
+    }
+    //ADMIN tools  -  active on off
+    public User updateActive(String email, int active){
+        User user = this.findUserByEmail(email);
+        user.setActive(active);
+        return userRepository.save(user);
+    }
 }

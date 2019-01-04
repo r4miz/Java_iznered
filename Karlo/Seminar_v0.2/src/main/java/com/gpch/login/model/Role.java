@@ -18,6 +18,26 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "role_id")
     private int id;
+
     @Column(name = "role")
     private String role;
+
+	public String getRole()
+	{
+		return this.role;
+	}
+
+	public void setRole(String role)
+	{
+		this.role = role;
+	}
+
+	public int getId() {
+		return this.id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 }
