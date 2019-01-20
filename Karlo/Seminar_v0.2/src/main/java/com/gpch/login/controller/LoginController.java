@@ -43,7 +43,8 @@ public class LoginController implements ErrorController{
     }
 
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
-    public ModelAndView createNewUser(@Valid User user, BindingResult bindingResult) {
+    public ModelAndView createNewUser(@Valid User user, BindingResult bindingResult,
+            @RequestParam("passTwo") String passTwo) {
         ModelAndView modelAndView = new ModelAndView();
         User userExists = userService.findUserByEmail(user.getEmail());
         if (userExists != null) {
@@ -54,9 +55,11 @@ public class LoginController implements ErrorController{
         if (bindingResult.hasErrors()) {
             modelAndView.setViewName("registration");
         } else {
-            userService.saveUser(user);
-            modelAndView.addObject("successMessage", "User has been registered successfully");
-            modelAndView.addObject("user", new User());
+            if(user.getPassword().equals(passTwo) == true){
+                userService.saveUser(user);
+                modelAndView.addObject("successMessage", "User has been registered successfully");
+                modelAndView.addObject("user", new User());
+            }
             modelAndView.setViewName("registration");
 
         }
@@ -70,7 +73,7 @@ public class LoginController implements ErrorController{
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByEmail(auth.getName());
-        modelAndView.addObject("userName", "Welcome " + user.getName() + " " + user.getLastName() + " (" + user.getEmail() + ")");
+        modelAndView.addObject("userName",user.getName() + " " + user.getLastName());
         modelAndView.setViewName("admin/home");
         return modelAndView;
     }
@@ -148,8 +151,7 @@ public class LoginController implements ErrorController{
         }
         else{
             User user = userService.findUserByEmail(auth.getName());
-            Set<Role> role = user.getRoles();
-            modelAndView.addObject("roles", role.toArray());
+            modelAndView.addObject("userName", user.getName() + " " + user.getLastName());
             modelAndView.setViewName("user/home");
         }
         return modelAndView;

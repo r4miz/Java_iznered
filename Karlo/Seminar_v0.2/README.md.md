@@ -24,3 +24,11 @@ riseno -> 	dodana fragmentacija html-ova, lakse se mogu vrsit izmjene nad naviga
 															-	davanje ADMIN ili micanje ADMIN prava nekome
 															-	deakcivacija i reaktivacija accounta
 													- 	treba omogucit tu i vodenje s racunima...
+
+# commit v0.2.2 @Karlo
+
+spremno za predat ->	- maka onu login sliku i ovu bozicnu istu.
+						- reka vrlic da bi bilo bolje da svak registriran pocne sa disabled acc
+						koji admin moze upalit
+						- reka je i da bi pri registraciji bilo logicno da se pass triba 2x napisat.
+						- maka iz admin tools iz fragmenata dva visak linka
