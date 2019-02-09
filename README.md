@@ -1,1 +1,1 @@
-# Java_iznered
+# Java_seminar
